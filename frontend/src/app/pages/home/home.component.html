@@ -1,0 +1,95 @@
+<div class="home">
+  <div class="actions-bar">
+    <button mat-raised-button color="primary" routerLink="/comerciantes/nuevo">
+      Nuevo comerciante
+    </button>
+    <button
+      *ngIf="auth.isAdmin()"
+      mat-raised-button
+      color="accent"
+      (click)="descargarCsv()"
+    >
+      Descargar reporte CSV
+    </button>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput [(ngModel)]="filterNombre" (keyup.enter)="onFilter()" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="filterEstado" (selectionChange)="onFilter()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="Activo">Activo</mat-option>
+        <mat-option value="Inactivo">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button (click)="onFilter()">Filtrar</button>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" class="full-width">
+      <ng-container matColumnDef="nombreRazonSocial">
+        <th mat-header-cell *matHeaderCellDef>Nombre o Razón Social</th>
+        <td mat-cell *matCellDef="let row">{{ row.nombreRazonSocial }}</td>
+      </ng-container>
+      <ng-container matColumnDef="telefono">
+        <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+        <td mat-cell *matCellDef="let row">{{ row.telefono || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="correo">
+        <th mat-header-cell *matHeaderCellDef>Correo</th>
+        <td mat-cell *matCellDef="let row">{{ row.correo || '-' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="fechaRegistro">
+        <th mat-header-cell *matHeaderCellDef>Fecha Registro</th>
+        <td mat-cell *matCellDef="let row">{{ formatDate(row.fechaRegistro) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="cantidadEstablecimientos">
+        <th mat-header-cell *matHeaderCellDef>Establecimientos</th>
+        <td mat-cell *matCellDef="let row">{{ row.cantidadEstablecimientos }}</td>
+      </ng-container>
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let row">{{ row.estado }}</td>
+      </ng-container>
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [routerLink]="['/comerciantes', row.id, 'editar']" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="toggleEstado(row)" matTooltip="Activar/Inactivar">
+            <mat-icon>{{ row.estado === 'Activo' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+          </button>
+          <button
+            *ngIf="auth.isAdmin()"
+            mat-icon-button
+            color="warn"
+            (click)="eliminar(row)"
+            matTooltip="Eliminar"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="7">No hay registros</td>
+      </tr>
+    </table>
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="page - 1"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </div>
+</div>

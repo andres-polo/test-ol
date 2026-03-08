@@ -1,0 +1,68 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ isEdit ? 'Editar comerciante' : 'Nuevo comerciante' }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre o Razón Social</mat-label>
+        <input matInput formControlName="nombreRazonSocial" />
+        <mat-error *ngIf="form.get('nombreRazonSocial')?.hasError('required')">Obligatorio</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Municipio</mat-label>
+        <mat-select formControlName="municipioId">
+          <mat-option [value]="null">Seleccione</mat-option>
+          <mat-option *ngFor="let m of municipios" [value]="m.id">{{ m.nombre }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('municipioId')?.hasError('required')">Obligatorio</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Teléfono (opcional)</mat-label>
+        <input matInput formControlName="telefono" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Correo electrónico (opcional)</mat-label>
+        <input matInput formControlName="correo" type="email" />
+        <mat-error *ngIf="form.get('correo')?.hasError('email')">Formato inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fecha de registro</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="fechaRegistro" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="estado">
+          <mat-option value="Activo">Activo</mat-option>
+          <mat-option value="Inactivo">Inactivo</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="poseeEstablecimientos" [disabled]="true">
+        ¿Posee establecimientos?
+      </mat-checkbox>
+      <span *ngIf="isEdit && poseeEstablecimientos" class="hint">
+        (Cantidad cargada desde BD)
+      </span>
+
+      <div class="footer-info" *ngIf="isEdit && (totalIngresos > 0 || totalEmpleados > 0)">
+        <p><strong>Sumatoria ingresos:</strong> {{ totalIngresos | number: '1.2-2' }}</p>
+        <p><strong>Sumatoria empleados:</strong> {{ totalEmpleados }}</p>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" routerLink="/home">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+          {{ loading ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

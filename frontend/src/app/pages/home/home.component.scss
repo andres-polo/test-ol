@@ -1,0 +1,29 @@
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.actions-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filters mat-form-field {
+  min-width: 200px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.full-width {
+  width: 100%;
+}

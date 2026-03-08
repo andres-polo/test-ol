@@ -34,6 +34,22 @@ test-ol/
 
 8. **Endpoints**: GET municipios, CRUD comerciantes, reporte CSV (solo Admin).
 
+## Validar con Frontend (Fase 3)
+
+1. **API en ejecución** (backend en `https://localhost:7149`).
+2. **Frontend**:
+   ```bash
+   cd frontend
+   npm install
+   npm start
+   ```
+3. Abrir `http://localhost:4200` → Login con `admin@comercio.com` / `Admin123!`.
+4. **Build producción**:
+   ```bash
+   cd frontend && npm run build
+   ```
+   Salida: `dist/frontend/`. Comprimir para entrega.
+
 ## Pruebas unitarias (Backend)
 
 ```bash
@@ -48,3 +64,10 @@ No requiere SQL Server ni API levantada. Incluye tests de validadores (Login, Co
 | `dotnet test` | Ejecuta todos los tests |
 | `dotnet test --verbosity normal` | Salida más detallada |
 | `dotnet test --filter "FullyQualifiedName~LoginRequest"` | Solo tests de LoginRequest |
+
+## Pruebas unitarias (Frontend)
+
+```bash
+cd frontend
+npm test
+```

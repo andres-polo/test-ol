@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using ComercioApi.Application.DTOs;
 using ComercioApi.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -12,8 +11,13 @@ namespace ComercioApi.Web.Controllers;
 public class ComerciantesController : ControllerBase
 {
     private readonly IComerciantesService _service;
+    private readonly ICurrentUserProvider _currentUser;
 
-    public ComerciantesController(IComerciantesService service) => _service = service;
+    public ComerciantesController(IComerciantesService service, ICurrentUserProvider currentUser)
+    {
+        _service = service;
+        _currentUser = currentUser;
+    }
 
     [HttpGet]
     [ProducesResponseType(typeof(ApiResponse<PagedResult<ComercianteDto>>), 200)]
@@ -45,7 +49,7 @@ public class ComerciantesController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> Create([FromBody] ComercianteCreateUpdateDto dto, CancellationToken ct)
     {
-        var created = await _service.CreateAsync(dto, GetCurrentUserName(), ct);
+        var created = await _service.CreateAsync(dto, _currentUser.GetCurrentUserName(), ct);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, ApiResponse.Ok(created));
     }
 
@@ -54,7 +58,7 @@ public class ComerciantesController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> Update(int id, [FromBody] ComercianteCreateUpdateDto dto, CancellationToken ct)
     {
-        var updated = await _service.UpdateAsync(id, dto, GetCurrentUserName(), ct);
+        var updated = await _service.UpdateAsync(id, dto, _currentUser.GetCurrentUserName(), ct);
         if (updated is null) return NotFound();
         return Ok(ApiResponse.Ok(updated));
     }
@@ -68,7 +72,7 @@ public class ComerciantesController : ControllerBase
         if (string.IsNullOrEmpty(request.Estado) || (request.Estado != "Activo" && request.Estado != "Inactivo"))
             return BadRequest(ApiResponse.Error("Estado debe ser 'Activo' o 'Inactivo'"));
 
-        var updated = await _service.PatchEstadoAsync(id, request.Estado, GetCurrentUserName(), ct);
+        var updated = await _service.PatchEstadoAsync(id, request.Estado, _currentUser.GetCurrentUserName(), ct);
         if (updated is null) return NotFound();
         return Ok(ApiResponse.Ok(updated));
     }
@@ -92,9 +96,4 @@ public class ComerciantesController : ControllerBase
         var bytes = await _service.GetReporteCsvAsync(ct);
         return File(bytes, "text/csv", $"reporte-comerciantes-{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
     }
-
-    private string GetCurrentUserName() =>
-        User.FindFirst(ClaimTypes.Name)?.Value ?? User.FindFirst("name")?.Value ?? "Sistema";
 }
-
-public record PatchEstadoRequest(string Estado);

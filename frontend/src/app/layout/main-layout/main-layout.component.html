@@ -1,0 +1,17 @@
+<header class="header">
+  <span class="title">Comercio</span>
+  <div class="user-menu" *ngIf="auth.currentUser(); else notLoggedIn">
+    <span class="user-info">{{ auth.currentUser()!.nombre }} - {{ auth.currentUser()!.rol }}</span>
+    <button mat-button [matMenuTriggerFor]="menu">Menú</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="/home">Home</button>
+      <button mat-menu-item (click)="auth.logout()">Cerrar sesión</button>
+    </mat-menu>
+  </div>
+  <ng-template #notLoggedIn>
+    <button mat-button routerLink="/login">Iniciar sesión</button>
+  </ng-template>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>

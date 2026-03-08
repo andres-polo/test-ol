@@ -2,8 +2,10 @@ using System.Text;
 using ComercioApi.Application;
 using ComercioApi.Application.Configuration;
 using ComercioApi.Application.Validators;
+using ComercioApi.Application.Interfaces;
 using ComercioApi.Infrastructure;
 using ComercioApi.Web.Middleware;
+using ComercioApi.Web.Providers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -64,6 +66,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);

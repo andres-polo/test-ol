@@ -21,6 +21,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=ComercioDb;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True"
     depends_on:
       - sqlserver

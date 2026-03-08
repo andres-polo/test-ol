@@ -1,0 +1,34 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Iniciar sesión</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput formControlName="correo" type="email" placeholder="usuario@ejemplo.com" />
+          <mat-error *ngIf="form.get('correo')?.hasError('required')">El correo es obligatorio</mat-error>
+          <mat-error *ngIf="form.get('correo')?.hasError('email')">Formato de correo inválido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="contrasena" type="password" />
+          <mat-error *ngIf="form.get('contrasena')?.hasError('required')">La contraseña es obligatoria</mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="aceptarTerminos" class="full-width">
+          Acepto los términos y condiciones
+        </mat-checkbox>
+        <mat-error *ngIf="form.get('aceptarTerminos')?.invalid && form.get('aceptarTerminos')?.touched">
+          Debes aceptar los términos para continuar
+        </mat-error>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="loading">
+          {{ loading ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
