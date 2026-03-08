@@ -1,0 +1,305 @@
+{
+  "info": {
+    "name": "Comercio API - Prueba Integral Lite",
+    "description": "Colección para la API de gestión de comerciantes y establecimientos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:7149"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var json = pm.response.json();",
+                  "    if (json.success && json.data && json.data.token) {",
+                  "        pm.collectionVariables.set('token', json.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@comercio.com\",\n  \"contrasena\": \"Admin123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autenticación. Credenciales: admin@comercio.com / Admin123! o auxiliar@comercio.com / Auxiliar123!"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Municipios",
+      "item": [
+        {
+          "name": "Get Municipios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/municipios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "municipios"
+              ]
+            },
+            "description": "Lista de municipios (requiere JWT)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comerciantes",
+      "item": [
+        {
+          "name": "Get Comerciantes (Paginado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes?page=1&pageSize=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "5"
+                },
+                {
+                  "key": "nombre",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "fechaRegistroDesde",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "fechaRegistroHasta",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "estado",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista paginada con filtros opcionales"
+          }
+        },
+        {
+          "name": "Get Comerciante por Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Comerciante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreRazonSocial\": \"Nuevo Comercio S.A.S\",\n  \"municipioId\": 1,\n  \"telefono\": \"3001234567\",\n  \"correo\": \"contacto@nuevo.com\",\n  \"fechaRegistro\": \"2024-01-15\",\n  \"estado\": \"Activo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Comerciante",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreRazonSocial\": \"Comercio Actualizado\",\n  \"municipioId\": 1,\n  \"telefono\": \"3109876543\",\n  \"correo\": \"info@actualizado.com\",\n  \"fechaRegistro\": \"2024-01-15\",\n  \"estado\": \"Activo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Patch Estado Comerciante",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"Inactivo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes/1/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes",
+                "1",
+                "estado"
+              ]
+            },
+            "description": "Cambiar estado a Activo o Inactivo"
+          }
+        },
+        {
+          "name": "Delete Comerciante",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes",
+                "1"
+              ]
+            },
+            "description": "Solo rol Administrador"
+          }
+        },
+        {
+          "name": "Descargar Reporte CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/comerciantes/reporte-csv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "comerciantes",
+                "reporte-csv"
+              ]
+            },
+            "description": "Solo rol Administrador. Genera archivo CSV con pipe como separador."
+          }
+        }
+      ]
+    }
+  ]
+}

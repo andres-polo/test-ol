@@ -1,0 +1,29 @@
+# Para validar Fase 1 + 2 sin frontend
+# Ejecutar: docker compose up -d
+# Luego ejecutar los scripts sql/ contra localhost:1433 (usuario: sa, contraseña: StrongPassword123!)
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "StrongPassword123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  comercio-api:
+    image: comercio-api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=ComercioDb;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True"
+    depends_on:
+      - sqlserver
+
+volumes:
+  sqlserver_data:

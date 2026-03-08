@@ -1,0 +1,89 @@
+# =========================
+# .NET / Backend
+# =========================
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+.vs/
+*.rsuser
+*.pidb
+*.pdb
+*.cache
+packages/
+!packages/build/
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+secrets.json
+*.db
+
+# =========================
+# Node / Angular / Frontend
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+tmp/
+.angular/
+.sass-cache/
+*.tsbuildinfo
+
+# =========================
+# IDEs
+# =========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================
+# Misc
+# =========================
+*.log
+.env
+.env.local
+.env.*.local
+*.bak
+*.tmp
+Prueba Integral Lite (TSQL-.NET-Angular) 2.docx
