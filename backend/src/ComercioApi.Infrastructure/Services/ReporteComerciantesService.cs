@@ -1,6 +1,8 @@
+using System.Data;
 using System.Text;
 using ComercioApi.Core.Interfaces;
 using ComercioApi.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComercioApi.Infrastructure.Services;
@@ -14,42 +16,46 @@ public class ReporteComerciantesService : IReporteComerciantesService
         _context = context;
     }
 
+    /// <summary>
+    /// Genera el CSV reutilizando el procedimiento almacenado sp_ReporteComerciantesActivos (Reto 04).
+    /// </summary>
     public async Task<byte[]> GenerarCsvReporteActivosAsync(CancellationToken cancellationToken = default)
     {
-        var items = await _context.Comerciantes
-            .AsNoTracking()
-            .Where(c => c.Estado == "Activo")
-            .Select(c => new
-            {
-                c.NombreRazonSocial,
-                Municipio = c.Municipio.Nombre,
-                c.Telefono,
-                c.Correo,
-                c.FechaRegistro,
-                c.Estado,
-                CantidadEstablecimientos = c.Establecimientos.Count,
-                TotalIngresos = c.Establecimientos.Sum(e => e.Ingresos),
-                CantidadEmpleados = c.Establecimientos.Sum(e => e.NumeroEmpleados)
-            })
-            .OrderByDescending(x => x.CantidadEstablecimientos)
-            .ToListAsync(cancellationToken);
+        await using var connection = (SqlConnection)_context.Database.GetDbConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        await using var cmd = connection.CreateCommand();
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.CommandText = "dbo.sp_ReporteComerciantesActivos";
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
 
         const char separator = '|';
         var sb = new StringBuilder();
         sb.AppendLine(string.Join(separator, "NombreRazonSocial", "Municipio", "Telefono", "Correo", "FechaRegistro", "Estado", "CantidadEstablecimientos", "TotalIngresos", "CantidadEmpleados"));
 
-        foreach (var item in items)
+        while (await reader.ReadAsync(cancellationToken))
         {
+            var nombreRazonSocial = reader.GetString(1);
+            var municipio = reader.GetString(2);
+            var telefono = reader.IsDBNull(3) ? "" : reader.GetString(3);
+            var correo = reader.IsDBNull(4) ? "" : reader.GetString(4);
+            var fechaRegistro = reader.GetDateTime(5).ToString("yyyy-MM-dd");
+            var estado = reader.GetString(6);
+            var cantidadEstablecimientos = reader.GetInt32(7);
+            var totalIngresos = reader.GetDecimal(8);
+            var cantidadEmpleados = reader.GetInt32(9);
+
             sb.AppendLine(string.Join(separator,
-                Escape(item.NombreRazonSocial),
-                Escape(item.Municipio),
-                Escape(item.Telefono ?? ""),
-                Escape(item.Correo ?? ""),
-                item.FechaRegistro.ToString("yyyy-MM-dd"),
-                Escape(item.Estado),
-                item.CantidadEstablecimientos,
-                item.TotalIngresos.ToString("F2"),
-                item.CantidadEmpleados));
+                Escape(nombreRazonSocial),
+                Escape(municipio),
+                Escape(telefono),
+                Escape(correo),
+                fechaRegistro,
+                Escape(estado),
+                cantidadEstablecimientos,
+                totalIngresos.ToString("F2"),
+                cantidadEmpleados));
         }
 
         return Encoding.UTF8.GetBytes(sb.ToString());
